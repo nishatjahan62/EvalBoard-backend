@@ -5,6 +5,7 @@ import helmet from "helmet";
 import { env } from "@/config/env.js";
 import { rateLimiter } from "@/middleware/rateLimiter.js";
 import { errorHandler } from "@/middleware/errorHandler.js";
+import routes from "@/routes/index.js";
 
 const app = express();
 
@@ -31,7 +32,7 @@ app.get("/api/health", (_req, res) => {
 });
 
 
-
+app.use("/api", routes);
 app.use(errorHandler);
 
 export default app;
