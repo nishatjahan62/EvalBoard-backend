@@ -1,9 +1,7 @@
-
 import type {
   ErrorRequestHandler,
   RequestHandler,
 } from "express";
-import { Prisma } from "@prisma/client";
 import { env } from "../config/env.js";
 import { AppError } from "../utils/app-error.js";
 
@@ -34,24 +32,23 @@ export const errorHandler: ErrorRequestHandler = (
     return;
   }
 
-  if (
-    error instanceof Prisma.PrismaClientKnownRequestError
-  ) {
-    if (error.code === "P2002") {
-      res.status(409).json({
-        success: false,
-        message: "A record with this information already exists.",
-      });
-      return;
-    }
+  
+  const errCode = (error as { code?: string })?.code;
 
-    if (error.code === "P2025") {
-      res.status(404).json({
-        success: false,
-        message: "The requested record was not found.",
-      });
-      return;
-    }
+  if (errCode === "P2002") {
+    res.status(409).json({
+      success: false,
+      message: "A record with this information already exists.",
+    });
+    return;
+  }
+
+  if (errCode === "P2025") {
+    res.status(404).json({
+      success: false,
+      message: "The requested record was not found.",
+    });
+    return;
   }
 
   if (env.NODE_ENV !== "production") {
