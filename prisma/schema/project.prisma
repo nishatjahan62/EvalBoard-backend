@@ -1,0 +1,17 @@
+
+model Project {
+  id            String        @id @default(cuid())
+  title         String
+  description   String        @db.Text
+  repositoryUrl String
+  liveDemoUrl   String?
+  status        ProjectStatus @default(PENDING)
+  studentId     String        @unique
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  student       User          @relation(fields: [studentId], references: [id], onDelete: Restrict)
+  reviews       Review[]
+
+  @@index([status, createdAt])
+}
